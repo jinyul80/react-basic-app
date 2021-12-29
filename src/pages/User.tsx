@@ -7,6 +7,8 @@ export interface UserType {
   name: string;
   username: string;
   email: string;
+  phone: string;
+  website: string;
 }
 
 const User = () => {
@@ -14,7 +16,7 @@ const User = () => {
 
   useEffect(() => {
     axios.get('https://jsonplaceholder.typicode.com/users').then((responese) => {
-      console.log(responese);
+      // console.log(responese);
       setUsers(responese.data);
     });
   }, []);
