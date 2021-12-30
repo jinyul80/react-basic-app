@@ -1,6 +1,7 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import PostList from '../components/PostList';
+import { UserType } from './User';
 
 export interface PostType {
   id: number;
@@ -13,22 +14,21 @@ export interface PostType {
 const Post = () => {
   const [posts, setPosts] = useState<PostType[]>([]);
 
-  const GetUserName = async (id: number): Promise<string> => {
-    const { data } = await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`);
-    return data.name;
-  };
-
   const GetPosts = async () => {
+    const userList: UserType[] = await axios
+      .get('https://jsonplaceholder.typicode.com/users')
+      .then((responese) => responese.data);
+
     const responese = await axios.get('https://jsonplaceholder.typicode.com/posts');
     let data = responese.data;
     const userIdList: any[] = Array.from(new Set(data.map((v: PostType) => v.userId)));
 
     for (const id of userIdList) {
-      const username = await GetUserName(parseInt(id));
+      const username = userList.find((user) => user.id === id)?.name;
 
       data = data.map((post: PostType) => {
         if (post.userId === id) {
-          post.userName = username;
+          post.userName = username as string;
           return post;
         } else {
           return post;
@@ -36,11 +36,11 @@ const Post = () => {
       });
     }
 
-    return data;
+    setPosts(data);
   };
 
   useEffect(() => {
-    GetPosts().then((v) => setPosts(v));
+    GetPosts();
   }, []);
 
   return (
