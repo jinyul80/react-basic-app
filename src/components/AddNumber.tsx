@@ -1,19 +1,29 @@
 import React, { useState } from 'react';
 import { Button, Col, Container, Form, Row } from 'react-bootstrap';
-import { connect } from 'react-redux';
-import { increment, decrement } from '../reducers/counter';
+import { useDispatch } from 'react-redux';
+import { increase, decrease } from '../reducers/counter';
 
-const AddNumber = (props: any) => {
+const AddNumber = () => {
   const [num, setNum] = useState('1');
+  const dispatch = useDispatch();
+
+  const onIncrease = () => {
+    dispatch(increase(Number(num)));
+  };
+
+  const onDecrease = () => {
+    dispatch(decrease(Number(num)));
+  };
+
   return (
     <Container className="redux-child">
       <h1>Add Number</h1>
       <Row className="align-items-center">
         <Col xs={2}>
-          <Button variant="primary" onClick={() => props.increment(num)}>
+          <Button variant="primary" onClick={onIncrease}>
             +
           </Button>
-          <Button variant="info" onClick={() => props.decrement(num)}>
+          <Button variant="info" onClick={onDecrease}>
             -
           </Button>
         </Col>
@@ -22,7 +32,7 @@ const AddNumber = (props: any) => {
             type="text"
             size="lg"
             value={num}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setNum(e.target.value);
             }}
           ></Form.Control>
@@ -32,10 +42,4 @@ const AddNumber = (props: any) => {
   );
 };
 
-const mapStateToProps = (state: any) => {
-  return { count: state.counter.count };
-};
-
-const mapDispatchToProps = { increment, decrement };
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddNumber);
+export default AddNumber;
